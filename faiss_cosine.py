@@ -70,7 +70,22 @@ class DataLoader:
             documents = [LangChainDocument(page_content=text, metadata={"source": self.filepath_or_url})]
         elif file_extension in ['.xlsx', '.xls']:
             df = pd.read_excel(self.filepath_or_url)
-            documents = [LangChainDocument(page_content=df.to_string(), metadata={"source": self.filepath_or_url})]
+            documents = []
+            chunk_size = 10  # Number of rows per chunk, adjust as needed
+            
+            for i in range(0, len(df), chunk_size):
+                chunk = df.iloc[i:i+chunk_size]
+                content = ""
+                for _, row in chunk.iterrows():
+                    content += " | ".join(f"{col}: {val}" for col, val in row.items())
+                    content += "\n"  # New line between rows
+                
+                metadata = {
+                    "source": f"{self.filepath_or_url}:rows{i+1}-{min(i+chunk_size, len(df))}",
+                    "row_range": f"{i+1}-{min(i+chunk_size, len(df))}"
+                }
+                documents.append(LangChainDocument(page_content=content.strip(), metadata=metadata))
+
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
 
