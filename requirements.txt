@@ -8,3 +8,6 @@ docx2txt
 numpy
 pillow
 pytesseract
+sentence_transformers
+tf-keras
+faiss-cpu
