@@ -1,167 +1,141 @@
-I apologize for the confusion. You're absolutely right, and I should have understood your request better. Let me provide you with a complete, interactive README.md file that you can directly use in your GitHub repository. Here it is:
+# AI-Powered Document Semantic Search without LLMs 
 
-```markdown
-#  Enhanced Document Semantic Search
+This project implements an AI-powered document semantic search system using Streamlit, LangChain, and various document processing techniques. It allows users to upload documents or scan images, process the content, and perform semantic searches without relying on a large language model.
 
-Welcome to the Enhanced Document Semantic Search project! This interactive tool allows you to upload documents, scan images, and perform semantic searches using cosine similarity without relying on a large language model.
+## Table of Contents
+- [Features](#features)
+- [System Architecture](#system-architecture)
+- [Setup](#setup)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
 
-<details>
-<summary> Features</summary>
+## Features
+- Document upload and processing (PDF, DOCX, TXT, XLS, XLSX)
+- Image scanning and OCR for text extraction
+- Text chunking and embedding using Hugging Face's sentence transformers
+- FAISS vector store for efficient similarity search
+- Cosine similarity-based semantic search without LLM
+- Customizable chunk size and overlap
+- Streamlit-based user interface for easy interaction
 
--  Document Upload: Support for PDF, DOCX, TXT, XLS, and XLSX files
--  Document Scanning: Use your camera to scan documents
--  Semantic Search: Utilizes cosine similarity for accurate results
--  Embeddings: Powered by Hugging Face's sentence transformers
--  Customizable: Adjust chunk size and overlap for optimal results
-</details>
+## System Architecture
+Here's a high-level overview of the system architecture:
 
-<details>
-<summary>Quick Start</summary>
+```mermaid
+graph TD
+    A[User] -->|Upload Document/Scan Image| B[Streamlit UI]
+    B -->|Process Document| C[DataLoader]
+    C -->|Chunk Text| D[Text Splitter]
+    D -->|Generate Embeddings| E[HuggingFace Embeddings]
+    E -->|Store Vectors| F[FAISS Vector Store]
+    A -->|Enter Query| B
+    B -->|Retrieve Similar Chunks| F
+    F -->|Calculate Cosine Similarity| G[Semantic Search]
+    G -->|Return Results| B
+    B -->|Display Results| A
 
-1. Clone this repository:
+```
+
+## Setup
+1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/enhanced-document-search.git
-   cd enhanced-document-search
+   https://github.com/FastianAbdullah/Semantic-Search-Without-LLM.git
    ```
-
 2. Install the required dependencies:
    ```
    pip install -r requirements.txt
    ```
-
-3. Run the Streamlit app:
+## Usage:
+   To start the application, run:
    ```
    streamlit run faiss_cosine.py
    ```
+The application will open in your default web browser.
 
-4. Open your web browser and navigate to the provided local URL (usually http://localhost:8501)
+## API Endpoints
+
+This project is primarily a Streamlit web application and does not expose traditional API endpoints. However, the main functionalities are accessible through the Streamlit UI:
+
+<details>
+<summary>1. Document Upload</summary>
+
+* Upload documents (PDF, DOCX, TXT, XLS, XLSX) using the file uploader in the "Document Upload" tab.
 </details>
 
 <details>
-<summary>How to Use</summary>
+<summary>2. Document Scanning</summary>
 
-### Document Upload
-1. Click on the "📄 Document Upload" tab
-2. Upload your document using the file uploader
-3. Wait for the document to be processed
-4. Enter your question in the search bar
-5. Adjust the number of results using the slider
-6. Explore the semantic search results!
-
-### Document Scanning
-1. Click on the "📷 Document Scan" tab
-2. Use your camera to take a picture of the document
-3. Wait for the OCR process to complete
-4. Review the scanned text
-5. Proceed with semantic search as in the Document Upload section
+* Use your camera to scan documents in the "Document Scan" tab.
 </details>
 
 <details>
-<summary>⚙️ Customization</summary>
+<summary>3. Semantic Search</summary>
 
-Use the sidebar to adjust:
-- Chunk Size: Controls the size of text chunks for processing
-- Chunk Overlap: Determines the overlap between chunks
+* Enter your query in the search bar after processing a document or scanned image.
 </details>
 
-<details>
-<summary>FAQ</summary>
-
-<details>
-<summary>What types of documents can I upload?</summary>
-The tool supports PDF, DOCX, TXT, XLS, and XLSX files.
-</details>
-
-<details>
-<summary>How accurate is the document scanning feature?</summary>
-The accuracy depends on the quality of the image and the clarity of the text. For best results, ensure good lighting and a clear focus on the document.
-</details>
-
-<details>
-<summary>Can I use this tool offline?</summary>
-Yes, once you've installed the dependencies, the tool can run offline on your local machine.
-</details>
-
-<details>
-<summary>How does the semantic search work without a large language model?</summary>
-The tool uses sentence transformers to create embeddings and then calculates cosine similarity between the query and document chunks.
-</details>
-</details>
-
-<details>
-<summary>Troubleshooting</summary>
-
-- If you encounter issues with PDF processing, ensure you have the latest version of pdfplumber installed.
-- For OCR problems, check that pytesseract is correctly installed and the Tesseract executable is in your system PATH.
-</details>
-
-<details>
-<summary>Contributing</summary>
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-</details>
 
-<details>
-<summary>License</summary>
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-</details>
+
+## Acknowledgements
 
 <details>
-<summary>Acknowledgements</summary>
+<summary>View Acknowledgements</summary>
 
-- [Streamlit](https://streamlit.io/) for the awesome web app framework
-- [LangChain](https://github.com/hwchase17/langchain) for document processing utilities
-- [Hugging Face](https://huggingface.co/) for the sentence transformers
-- [FAISS](https://github.com/facebookresearch/faiss) for efficient similarity search
+* Streamlit for the web app framework
+* LangChain for document processing utilities
+* Hugging Face for sentence transformers
+* FAISS for efficient similarity search
 </details>
 
+## Dependencies
+
 <details>
-<summary>Dependencies</summary>
+<summary>View Dependencies</summary>
 
-This project requires the following Python packages:
-
-- streamlit
-- langchain-text-splitters
-- langchain-community
-- sentence-transformers
-- faiss-cpu
-- pdfplumber
-- pandas
-- docx2txt
-- numpy
-- pillow
-- pytesseract
-
-You can install these dependencies using the following command:
-
-```
-pip install -r requirements.txt
-```
+* streamlit
+* langchain-text-splitters
+* langchain-community
+* sentence-transformers
+* faiss-cpu
+* pdfplumber
+* pandas
+* docx2txt
+* numpy
+* pillow
+* pytesseract
 </details>
 
-<details>
-<summary>Code Overview</summary>
+## Code Overview
 
 The main script `faiss_cosine.py` contains the following key components:
+
+<details>
+<summary>View Components</summary>
 
 1. `DataLoader` class: Handles document loading and chunking for various file types.
 2. `cosine_similarity` function: Calculates the cosine similarity between two vectors.
 3. `scan_document` function: Uses OCR to extract text from scanned images.
 4. `main` function: Sets up the Streamlit interface and manages the overall flow of the application.
 5. `process_chunks` function: Creates embeddings, builds the FAISS index, and performs the semantic search.
-
-The script uses Streamlit for the user interface, allowing for an interactive experience with file uploads, document scanning, and real-time search results.
 </details>
+
+## Future Improvements
 
 <details>
-<summary>Future Improvements</summary>
+<summary>View Future Improvements</summary>
 
-- Add support for more file types
-- Implement multi-language support
-- Optimize performance for larger documents
-- Integrate with cloud storage services for document management
+* Add support for more file types
+* Implement multi-language support
+* Optimize performance for larger documents
+* Integrate with cloud storage services for document management
+</details>
 
 Feel free to contribute to these improvements or suggest new features!
-</details>
-```
