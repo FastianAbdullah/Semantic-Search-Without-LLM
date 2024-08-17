@@ -18,7 +18,7 @@ def load_embeddings():
 
 embeddings = load_embeddings()
 
-# Add some custom CSS for animations and styling
+
 st.markdown("""
     <style>
     .stButton>button {
@@ -105,12 +105,10 @@ def main():
     st.title("🚀 Enhanced Document Semantic Search")
     st.markdown("### With Cosine Similarity (No LLM) and Document Scanning")
 
-    # Add a sidebar for additional options
     st.sidebar.header("Options")
     chunk_size = st.sidebar.slider("Chunk Size", 256, 2048, 1024)
     chunk_overlap = st.sidebar.slider("Chunk Overlap", 0, 200, 80)
 
-    # Create tabs for different functionalities
     tab1, tab2 = st.tabs(["📄 Document Upload", "📷 Document Scan"])
 
     with tab1:
@@ -139,7 +137,7 @@ def main():
             st.success("Document scanned successfully!")
             st.text_area("Scanned Text", scanned_text, height=200)
             
-            # Create a document from scanned text
+
             document = LangChainDocument(page_content=scanned_text, metadata={"source": "Scanned Document"})
             chunks = DataLoader("").chunk_document([document], chunk_size=chunk_size, chunk_overlap=chunk_overlap)
             
