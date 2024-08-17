@@ -1,0 +1,13 @@
+streamlit
+langchain
+langchain-text-splitters
+langchain-community
+pdfplumber
+pandas
+docx2txt
+numpy
+pillow
+pytesseract
+sentence_transformers
+tf-keras
+faiss-cpu
