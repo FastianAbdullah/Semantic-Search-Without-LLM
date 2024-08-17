@@ -117,8 +117,8 @@ def scan_document(image):
     return text
 
 def main():
-    st.title("🚀 Enhanced Document Semantic Search")
-    st.markdown("### With Cosine Similarity (No LLM) and Document Scanning")
+    st.title("Semantic Search Without LLMs")
+    st.markdown("### With Cosine Similarity and FAISS")
 
     st.sidebar.header("Options")
     chunk_size = st.sidebar.slider("Chunk Size", 256, 2048, 1024)
