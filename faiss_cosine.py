@@ -1,23 +1,25 @@
 import streamlit as st
-from langchain_text_splitters import RecursiveCharacterTextSplitter 
-from langchain_community.embeddings import HuggingFaceBgeEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders import PDFPlumberLoader  
+import requests
+from bs4 import BeautifulSoup
 import os
 import pandas as pd
 import docx2txt
 from typing import List
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceBgeEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.schema import Document as LangChainDocument
 import numpy as np
 from PIL import Image
 import pytesseract
+import PyPDF2
 
+# Function to load embeddings
 @st.cache_resource
 def load_embeddings():
     return HuggingFaceBgeEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 embeddings = load_embeddings()
-
 
 st.markdown("""
     <style>
@@ -49,6 +51,17 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+class WebCrawler:
+    def __init__(self, url):
+        self.url = url
+
+    def fetch_content(self):
+        response = requests.get(self.url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+            return soup.get_text()
+        else:
+            raise Exception(f"Failed to fetch {self.url} (Status code: {response.status_code})")
 
 class DataLoader:
     def __init__(self, filepath_or_url, user_agent=None):
@@ -59,8 +72,7 @@ class DataLoader:
         file_extension = os.path.splitext(self.filepath_or_url)[1].lower()
         
         if file_extension == '.pdf':
-            loader = PDFPlumberLoader(self.filepath_or_url)
-            documents = loader.load()
+            documents = self._load_pdf()
         elif file_extension == '.txt':
             with open(self.filepath_or_url, 'r', encoding='utf-8') as file:
                 text = file.read()
@@ -70,26 +82,19 @@ class DataLoader:
             documents = [LangChainDocument(page_content=text, metadata={"source": self.filepath_or_url})]
         elif file_extension in ['.xlsx', '.xls']:
             df = pd.read_excel(self.filepath_or_url)
-            documents = []
-            chunk_size = 10  # Number of rows per chunk, adjust as needed
-            
-            for i in range(0, len(df), chunk_size):
-                chunk = df.iloc[i:i+chunk_size]
-                content = ""
-                for _, row in chunk.iterrows():
-                    content += " | ".join(f"{col}: {val}" for col, val in row.items())
-                    content += "\n"  # New line between rows
-                
-                metadata = {
-                    "source": f"{self.filepath_or_url}:rows{i+1}-{min(i+chunk_size, len(df))}",
-                    "row_range": f"{i+1}-{min(i+chunk_size, len(df))}"
-                }
-                documents.append(LangChainDocument(page_content=content.strip(), metadata=metadata))
-
+            documents = [LangChainDocument(page_content=df.to_string(), metadata={"source": self.filepath_or_url})]
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
-
+        
         return documents
+
+    def _load_pdf(self):
+        with open(self.filepath_or_url, 'rb') as pdf_file:
+            reader = PyPDF2.PdfReader(pdf_file)
+            text = ''
+            for page in reader.pages:
+                text += page.extract_text()
+        return [LangChainDocument(page_content=text, metadata={"source": self.filepath_or_url})]
 
     def chunk_document(self, documents, chunk_size=1024, chunk_overlap=80):
         text_splitter = RecursiveCharacterTextSplitter(
@@ -112,19 +117,18 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 def scan_document(image):
-  
     text = pytesseract.image_to_string(image)
     return text
 
 def main():
-    st.title("Semantic Search Without LLMs")
-    st.markdown("### With Cosine Similarity and FAISS")
+    st.title("🚀 Enhanced Document Semantic Search with Web Crawling")
+    st.markdown("### With Cosine Similarity (No LLM) and Document Scanning")
 
     st.sidebar.header("Options")
     chunk_size = st.sidebar.slider("Chunk Size", 256, 2048, 1024)
     chunk_overlap = st.sidebar.slider("Chunk Overlap", 0, 200, 80)
 
-    tab1, tab2 = st.tabs(["📄 Document Upload", "📷 Document Scan"])
+    tab1, tab2, tab3 = st.tabs(["📄 Document Upload", "📷 Document Scan", "🌐 Web Crawl"])
 
     with tab1:
         uploaded_file = st.file_uploader("Upload a document (PDF, DOCX, TXT, XLS, XLSX)", type=["pdf", "docx", "txt", "xls", "xlsx"])
@@ -152,11 +156,27 @@ def main():
             st.success("Document scanned successfully!")
             st.text_area("Scanned Text", scanned_text, height=200)
             
-
             document = LangChainDocument(page_content=scanned_text, metadata={"source": "Scanned Document"})
             chunks = DataLoader("").chunk_document([document], chunk_size=chunk_size, chunk_overlap=chunk_overlap)
             
             process_chunks(chunks)
+
+    with tab3:
+        url = st.text_input("Enter URL to crawl", "")
+        
+        if url:
+            with st.spinner("🌐 Crawling the web..."):
+                crawler = WebCrawler(url)
+                try:
+                    content = crawler.fetch_content()
+                    st.success("Content fetched successfully!")
+                    st.text_area("Crawled Content", content[:2000], height=200)
+
+                    document = LangChainDocument(page_content=content, metadata={"source": url})
+                    chunks = DataLoader("").chunk_document([document], chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+                    process_chunks(chunks)
+                except Exception as e:
+                    st.error(f"Error: {e}")
 
 def process_chunks(chunks):
     if chunks:
