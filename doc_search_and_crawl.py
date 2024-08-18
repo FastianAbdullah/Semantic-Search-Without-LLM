@@ -14,6 +14,9 @@ from PIL import Image
 import pytesseract
 import PyPDF2
 
+# Configure Tesseract path 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
 # Function to load embeddings
 @st.cache_resource
 def load_embeddings():
@@ -128,9 +131,7 @@ def main():
     chunk_size = st.sidebar.slider("Chunk Size", 256, 2048, 1024)
     chunk_overlap = st.sidebar.slider("Chunk Overlap", 0, 200, 80)
 
-    # tab1, tab2, tab3 = st.tabs(["📄 Document Upload", "📷 Document Scan", "🌐 Web Crawl"])
-    tab1, tab3 = st.tabs(["📄 Document Upload", "🌐 Web Crawl"])
-
+    tab1, tab2, tab3 = st.tabs(["📄 Document Upload", "📷 Document Scan", "🌐 Web Crawl"])
 
     with tab1:
         uploaded_file = st.file_uploader("Upload a document (PDF, DOCX, TXT, XLS, XLSX)", type=["pdf", "docx", "txt", "xls", "xlsx"])
@@ -146,22 +147,22 @@ def main():
             
             process_chunks(chunks)
 
-    # with tab2:
-    #     st.write("📸 Scan a document using your camera or upload an image")
-    #     scanned_image = st.camera_input("Take a picture of your document")
+    with tab2:
+        st.write("📸 Scan a document using your camera or upload an image")
+        scanned_image = st.camera_input("Take a picture of your document")
         
-    #     if scanned_image:
-    #         image = Image.open(scanned_image)
-    #         with st.spinner("🔍 Scanning document..."):
-    #             scanned_text = scan_document(image)
+        if scanned_image:
+            image = Image.open(scanned_image)
+            with st.spinner("🔍 Scanning document..."):
+                scanned_text = scan_document(image)
             
-    #         st.success("Document scanned successfully!")
-    #         st.text_area("Scanned Text", scanned_text, height=200)
+            st.success("Document scanned successfully!")
+            st.text_area("Scanned Text", scanned_text, height=200)
             
-    #         document = LangChainDocument(page_content=scanned_text, metadata={"source": "Scanned Document"})
-    #         chunks = DataLoader("").chunk_document([document], chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+            document = LangChainDocument(page_content=scanned_text, metadata={"source": "Scanned Document"})
+            chunks = DataLoader("").chunk_document([document], chunk_size=chunk_size, chunk_overlap=chunk_overlap)
             
-    #         process_chunks(chunks)
+            process_chunks(chunks)
 
     with tab3:
         url = st.text_input("Enter URL to crawl", "")
