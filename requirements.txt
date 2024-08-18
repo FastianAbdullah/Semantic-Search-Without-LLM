@@ -12,4 +12,5 @@ sentence_transformers
 tf-keras
 faiss-cpu
 beautifulsoup4
-requests 
+requests
+PyPDF2
