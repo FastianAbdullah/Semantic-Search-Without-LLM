@@ -11,4 +11,5 @@ pytesseract
 sentence_transformers
 tf-keras
 faiss-cpu
-beautifulsoup4 requests
+beautifulsoup4
+requests 
