@@ -53,7 +53,7 @@ graph TD
 ## Usage:
    To start the application, run:
    ```
-   streamlit run faiss_cosine.py
+   streamlit run doc_search_and_crawl.py
    ```
 The application will open in your default web browser.
 
