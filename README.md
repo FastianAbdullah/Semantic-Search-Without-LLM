@@ -127,7 +127,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Code Overview
 
-The main script `faiss_cosine.py` contains the following key components:
+The main script `doc_search_and_crawl.py` contains the following key components:
 
 <details>
 <summary>View Components</summary>
