@@ -1,19 +1,20 @@
-# AI-Powered Document Semantic Search without LLMs 
+# AI-Powered Document Semantic Search with Web Crawling
 
-This project implements an AI-powered document semantic search system using Streamlit, LangChain, and various document processing techniques. It allows users to upload documents or scan images, process the content, and perform semantic searches without relying on a large language model.
+This project implements an AI-powered document semantic search system using Streamlit, LangChain, and various document processing techniques. It allows users to upload documents, scan images, crawl web pages, process the content, and perform semantic searches without relying on a large language model.
 
 ## Table of Contents
 - [Features](#features)
 - [System Architecture](#system-architecture)
 - [Setup](#setup)
 - [Usage](#usage)
-- [API Endpoints](#api-endpoints)
+- [Features](#features-1)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Features
 - Document upload and processing (PDF, DOCX, TXT, XLS, XLSX)
 - Image scanning and OCR for text extraction
+- Web crawling for content retrieval
 - Text chunking and embedding using Hugging Face's sentence transformers
 - FAISS vector store for efficient similarity search
 - Cosine similarity-based semantic search without LLM
@@ -24,10 +25,13 @@ This project implements an AI-powered document semantic search system using Stre
 Here's a high-level overview of the system architecture:
 
 ```mermaid
+
 graph TD
-    A[User] -->|Upload Document/Scan Image| B[Streamlit UI]
+    A[User] -->|Upload Document/Scan Image/Enter URL| B[Streamlit UI]
     B -->|Process Document| C[DataLoader]
+    B -->|Crawl Web| H[WebCrawler]
     C -->|Chunk Text| D[Text Splitter]
+    H -->|Extract Content| D
     D -->|Generate Embeddings| E[HuggingFace Embeddings]
     E -->|Store Vectors| F[FAISS Vector Store]
     A -->|Enter Query| B
@@ -35,7 +39,6 @@ graph TD
     F -->|Calculate Cosine Similarity| G[Semantic Search]
     G -->|Return Results| B
     B -->|Display Results| A
-
 ```
 
 ## Setup
@@ -76,6 +79,13 @@ This project is primarily a Streamlit web application and does not expose tradit
 * Enter your query in the search bar after processing a document or scanned image.
 </details>
 
+<details>
+<summary>4. Web Crawling</summary>
+
+* Enter a URL in the "Web Crawl" tab to fetch and process web content.
+</details>
+
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -93,6 +103,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * LangChain for document processing utilities
 * Hugging Face for sentence transformers
 * FAISS for efficient similarity search
+* BeautifulSoup for web scraping
 </details>
 
 ## Dependencies
@@ -111,6 +122,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 * numpy
 * pillow
 * pytesseract
+* PyPDF2
 </details>
 
 ## Code Overview
@@ -121,10 +133,11 @@ The main script `faiss_cosine.py` contains the following key components:
 <summary>View Components</summary>
 
 1. `DataLoader` class: Handles document loading and chunking for various file types.
-2. `cosine_similarity` function: Calculates the cosine similarity between two vectors.
-3. `scan_document` function: Uses OCR to extract text from scanned images.
-4. `main` function: Sets up the Streamlit interface and manages the overall flow of the application.
-5. `process_chunks` function: Creates embeddings, builds the FAISS index, and performs the semantic search.
+2. `WebCrawler` class: Handles web content retrieval and parsing.
+3. `cosine_similarity` function: Calculates the cosine similarity between two vectors.
+4. `scan_document` function: Uses OCR to extract text from scanned images.
+5. `main` function: Sets up the Streamlit interface and manages the overall flow of the application.
+6. `process_chunks` function: Creates embeddings, builds the FAISS index, and performs the semantic search.
 </details>
 
 ## Future Improvements
@@ -136,6 +149,7 @@ The main script `faiss_cosine.py` contains the following key components:
 * Implement multi-language support
 * Optimize performance for larger documents
 * Integrate with cloud storage services for document management
+* Implement advanced web crawling features (depth control, multiple page crawling)
 </details>
 
 Feel free to contribute to these improvements or suggest new features!
